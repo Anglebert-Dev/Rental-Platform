@@ -1,4 +1,6 @@
-const { Booking, Property } = require('../models/booking.model');
+
+const Booking = require('../models/booking.model');
+const Property = require('../models/property.model');
 const { isAvailable } = require('../services/booking.service');
 
 const bookingController = {

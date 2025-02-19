@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/user.model');
+const  User = require('../models/user.model');
 
 const authController = {
   googleCallback: async (req, res) => {
@@ -23,7 +23,7 @@ const authController = {
       await user.save();
       res.json({ message: 'Role updated successfully', user });
     } catch (error) {
-      res.status(500).json({ message: 'Role update failed' });
+      res.status(500).json({ error:error.message ,message: 'Role update failed' });
     }
   }
 };

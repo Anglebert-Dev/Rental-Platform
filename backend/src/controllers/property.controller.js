@@ -1,4 +1,5 @@
-const { Property, Booking } = require('../models/property.model');
+const Property = require('../models/property.model');
+const Booking = require('../models/booking.model');
 
 const propertyController = {
   createProperty: async (req, res) => {
@@ -13,7 +14,7 @@ const propertyController = {
       });
       res.status(201).json(property);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to create property' });
+      res.status(500).json({ error:error.message ,message: 'Failed to create property' });
     }
   },
 
