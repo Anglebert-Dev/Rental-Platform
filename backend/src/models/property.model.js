@@ -1,3 +1,6 @@
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/database');
+
 const Property = sequelize.define('Property', {
     id: {
       type: DataTypes.UUID,

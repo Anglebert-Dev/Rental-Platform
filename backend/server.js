@@ -1,8 +1,7 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const passport = require('passport');
+const passport = require('./src/config/passport');
 const { sequelize } = require('./src/config/database');
 const errorHandler = require('./src/utils/errorHandler');
 

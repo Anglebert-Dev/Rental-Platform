@@ -25,3 +25,5 @@ const authMiddleware = {
     next();
   }
 };
+
+module.exports = authMiddleware;
