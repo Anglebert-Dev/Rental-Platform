@@ -1,6 +1,4 @@
-// const Property = require('../models/property.model');
-// const Booking = require('../models/booking.model');
-const {Property , Booking} = require('../models');
+const { Property, Booking, User } = require("../models");
 
 const propertyController = {
   createProperty: async (req, res) => {
@@ -11,25 +9,84 @@ const propertyController = {
         description,
         pricePerNight,
         location,
-        hostId: req.user.id
+        hostId: req.user.id,
       });
       res.status(201).json(property);
     } catch (error) {
-      res.status(500).json({ error:error.message ,message: 'Failed to create property' });
+      res
+        .status(500)
+        .json({ error: error.message, message: "Failed to create property" });
     }
   },
 
   getProperties: async (req, res) => {
     try {
       const properties = await Property.findAll({
-        include: [{
-          model: Booking,
-          attributes: ['checkInDate', 'checkOutDate', 'status']
-        }]
+        include: [
+          {
+            model: Booking,
+            attributes: [
+              "id",
+              "checkInDate",
+              "checkOutDate",
+              "status",
+              "totalPrice",
+            ],
+            include: [
+              {
+                model: User,
+                as: "renter",
+                attributes: ["id", "name", "email"],
+              },
+            ],
+          },
+        ],
+        order: [["createdAt", "DESC"]],
       });
       res.json(properties);
     } catch (error) {
-      res.status(500).json({ error:error.message , message: 'Failed to fetch properties' });
+      console.error("Error fetching properties:", error);
+      res.status(500).json({ message: "Failed to fetch properties" });
+    }
+  },
+
+  getPropertyById: async (req, res) => {
+    try {
+      const property = await Property.findByPk(req.params.id, {
+        include: [
+          {
+            model: Booking,
+            attributes: [
+              "id",
+              "checkInDate",
+              "checkOutDate",
+              "status",
+              "totalPrice",
+            ],
+            include: [
+              {
+                model: User,
+                as: "renter",
+                attributes: ["id", "name", "email"],
+              },
+            ],
+          },
+          {
+            model: User,
+            as: "host",
+            attributes: ["id", "name", "email"],
+          },
+        ],
+      });
+
+      if (!property) {
+        return res.status(404).json({ message: "Property not found" });
+      }
+
+      res.json(property);
+    } catch (error) {
+      console.error("Error fetching property:", error);
+      res.status(500).json({ message: "Failed to fetch property" });
     }
   },
 
@@ -37,15 +94,15 @@ const propertyController = {
     try {
       const { id } = req.params;
       const property = await Property.findOne({
-        where: { id, hostId: req.user.id }
+        where: { id, hostId: req.user.id },
       });
       if (!property) {
-        return res.status(404).json({ message: 'Property not found' });
+        return res.status(404).json({ message: "Property not found" });
       }
       await property.update(req.body);
       res.json(property);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to update property' });
+      res.status(500).json({ message: "Failed to update property" });
     }
   },
 
@@ -53,17 +110,17 @@ const propertyController = {
     try {
       const { id } = req.params;
       const property = await Property.findOne({
-        where: { id, hostId: req.user.id }
+        where: { id, hostId: req.user.id },
       });
       if (!property) {
-        return res.status(404).json({ message: 'Property not found' });
+        return res.status(404).json({ message: "Property not found" });
       }
       await property.destroy();
-      res.json({ message: 'Property deleted successfully' });
+      res.json({ message: "Property deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to delete property' });
+      res.status(500).json({ message: "Failed to delete property" });
     }
-  }
+  },
 };
 
 module.exports = propertyController;

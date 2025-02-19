@@ -2,3 +2,28 @@
 /backend/node_modules
 /frontend/node_modules
 /frontend/.env
+
+# Logs
+/frontent/logs
+/frontent/*.log
+/frontent/npm-debug.log*
+/frontent/yarn-debug.log*
+/frontent/yarn-error.log*
+/frontent/pnpm-debug.log*
+lerna-debug.log*
+
+
+/frontent/dist
+/frontent/dist-ssr
+/frontent/*.local
+
+# Editor directories and files
+/frontent/.vscode/*
+/frontent/!.vscode/extensions.json
+/frontent/.idea
+/frontent/.DS_Store
+/frontent/*.suo
+/frontent/*.ntvs*
+/frontent/*.njsproj
+/frontent/*.sln
+/frontent/*.sw?
