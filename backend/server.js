@@ -1,9 +1,17 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const passport = require('passport');
-const { sequelize } = require('./src/models');
+const { sequelize } = require('./src/config/database');
+const errorHandler = require('./src/utils/errorHandler');
 
+// Import routes
+const authRoutes = require('./src/routes/auth.routes');
+const propertyRoutes = require('./src/routes/property.routes');
+const bookingRoutes = require('./src/routes/booking.routes');
+
+// Initialize express app
 const app = express();
 
 // Middleware
@@ -12,16 +20,14 @@ app.use(express.json());
 app.use(passport.initialize());
 
 // Routes
-app.use('/api/auth', require('./src/routes/auth.routes'));
-app.use('/api/properties', require('./src/routes/property.routes'));
-app.use('/api/bookings', require('./src/routes/booking.routes'));
+app.use('/api/auth', authRoutes);
+app.use('/api/properties', propertyRoutes);
+app.use('/api/bookings', bookingRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
-});
+// Error handling
+app.use(errorHandler.handleError);
 
+// Start server
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
@@ -29,11 +35,18 @@ async function startServer() {
     await sequelize.authenticate();
     console.log('Database connected successfully.');
     
+    // Sync database (in development)
+    if (process.env.NODE_ENV === 'development') {
+      await sequelize.sync({ alter: true });
+      console.log('Database synced.');
+    }
+    
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
     console.error('Unable to start server:', error);
+    process.exit(1);
   }
 }
 
