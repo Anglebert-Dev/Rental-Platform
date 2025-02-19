@@ -1,4 +1,4 @@
-const { Booking } = require('../models/booking.model');
+const { Booking } = require('../models');
 const { Op } = require('sequelize');
 
 const bookingService = {

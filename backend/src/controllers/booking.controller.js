@@ -1,6 +1,4 @@
-
-const Booking = require('../models/booking.model');
-const Property = require('../models/property.model');
+const { Booking, Property } = require('../models');
 const { isAvailable } = require('../services/booking.service');
 
 const bookingController = {
@@ -27,7 +25,7 @@ const bookingController = {
 
       res.status(201).json(booking);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to create booking' });
+      res.status(500).json({ error:error.message ,message: 'Failed to create booking' });
     }
   },
 
