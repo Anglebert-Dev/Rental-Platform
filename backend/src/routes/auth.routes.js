@@ -3,6 +3,8 @@ const passport = require("../config/passport");
 const {
   googleCallback,
   updateRole,
+  logout,
+  verifyToken,
 } = require("../controllers/auth.controller");
 
 
@@ -16,6 +18,8 @@ router.get(
   })
 );
 router.get("/google/callback", passport.authenticate("google"), googleCallback);
+router.get('/verify', authenticateToken, verifyToken);
 router.put("/role", authenticateToken, updateRole);
+router.get('/logout', logout);
 
 module.exports = router;
