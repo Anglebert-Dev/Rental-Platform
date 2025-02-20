@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { propertyService } from "../services/api";
 import BookingForm from "../components/BookingForm";
-import { MapPinIcon, UserIcon } from "@heroicons/react/outline";
+import { MapPinIcon, UserIcon } from '@heroicons/react/24/outline';
 
 export default function PropertyDetails() {
   const { id } = useParams();

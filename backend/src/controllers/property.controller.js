@@ -86,7 +86,7 @@ const propertyController = {
       res.json(property);
     } catch (error) {
       console.error("Error fetching property:", error);
-      res.status(500).json({ message: "Failed to fetch property" });
+      res.status(500).json({  message: "Failed to fetch property" });
     }
   },
 

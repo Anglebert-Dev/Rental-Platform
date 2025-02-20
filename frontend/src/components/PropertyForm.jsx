@@ -1,6 +1,5 @@
-// src/components/PropertyForm.jsx
 import { useState, useEffect } from 'react';
-import { XIcon } from '@heroicons/react/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function PropertyForm({ property, onSubmit, onClose }) {
   const [formData, setFormData] = useState({

@@ -4,7 +4,7 @@ const Booking = require("./booking.model");
 
 // Define relationships
 User.hasMany(Property, { foreignKey: "hostId" });
-Property.belongsTo(User, { foreignKey: "hostId" });
+Property.belongsTo(User, { foreignKey: "hostId" , as:"host" }); // Add 'as' alias
 
 User.hasMany(Booking, { foreignKey: "renterId" });
 Booking.belongsTo(User, { foreignKey: "renterId" , as: "renter" }); 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { propertyService, bookingService } from '../services/api';
-import { PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import PropertyForm from '../components/PropertyForm';
 import toast from 'react-hot-toast';
 

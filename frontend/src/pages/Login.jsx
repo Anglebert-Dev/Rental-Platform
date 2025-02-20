@@ -1,6 +1,3 @@
-Frontend Pages
-
-// src/pages/Login.jsx
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
