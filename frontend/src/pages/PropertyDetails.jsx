@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { propertyService } from "../services/api";
 import BookingForm from "../components/BookingForm";
-import { MapPinIcon, UserIcon } from '@heroicons/react/24/outline';
+// import { MapPinIcon, UserIcon } from '@heroicons/react/24/outline';
+import { MapIcon, UserIcon } from "@heroicons/react/outline";
+
+
 
 export default function PropertyDetails() {
   const { id } = useParams();
@@ -38,7 +41,7 @@ export default function PropertyDetails() {
         <div className="md:col-span-2">
           <h1 className="text-3xl font-bold mb-4">{property.title}</h1>
           <div className="flex items-center text-gray-500 mb-4">
-            <MapPinIcon className="w-5 h-5 mr-2" />
+            <MapIcon className="w-5 h-5 mr-2" />
             {property.location}
           </div>
           <div className="aspect-w-16 aspect-h-9 mb-6">

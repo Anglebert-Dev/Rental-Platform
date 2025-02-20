@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+// import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XIcon } from "@heroicons/react/outline"; // ✅ Correct for Heroicons v1
+
 
 export default function PropertyForm({ property, onSubmit, onClose }) {
   const [formData, setFormData] = useState({
