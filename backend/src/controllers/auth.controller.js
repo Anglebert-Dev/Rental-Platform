@@ -23,25 +23,23 @@ const authController = {
     }
   },
 
-  verifyToken: async (req, res) => {
-    try {
-      const user = await User.findByPk(req.user.id);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.json({
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          profilePicture: user.profilePicture,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({ message: "Token verification failed" });
+  verifyToken : (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1]; 
+  
+    if (!token) {
+      return res.status(401).send({ message: "No token provided" });
     }
-  },
+  
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(403).send({ message: "Failed to authenticate token" });
+      }
+  
+      // Assuming `decoded` has the user info
+      res.status(200).send({ user: decoded });
+    });
+  };
+  
 
   logout: (req, res) => {
     res.json({ message: "Logged out successfully" });

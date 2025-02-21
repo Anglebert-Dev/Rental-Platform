@@ -1,52 +1,58 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { createContext, useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
+// Create the context
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
+  // Check for the token in the URL when the page loads
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
     if (token) {
-      // Verify token and get user data
+      // Store the token in localStorage
+      localStorage.setItem("token", token);
+
+      // Set token for axios headers to include it in all future requests
+      axios.defaults.headers.Authorization = `Bearer ${token}`;
+
+      // Optional: Validate the token by calling a backend endpoint
       validateToken(token);
     } else {
+      // If no token, just finish loading
       setLoading(false);
     }
   }, []);
 
   const validateToken = async (token) => {
     try {
-      const response = await axios.get('/api/auth/verify', {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await axios.get("/api/auth/verify", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUser(response.data.user);
     } catch (error) {
-      localStorage.removeItem('token');
+      console.error("Token validation failed", error);
+      // Handle token validation error
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (googleData) => {
-    try {
-      const response = await axios.post('/api/auth/google', {
-        token: googleData.tokenId
-      });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
-      return user;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Login failed');
-    }
+  const login = () => {
+    // Redirect user to Google login
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
+    window.location.href = "/";
   };
 
   return (
@@ -56,10 +62,11 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
