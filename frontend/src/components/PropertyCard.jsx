@@ -7,7 +7,7 @@ export default function PropertyCard({ property }) {
       className="block bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg"
     >
       {/* Property Image */}
-      <div className="relative aspect-w-16 aspect-h-9 bg-gray-200">
+      <div className="relative h-48 bg-gray-200 overflow-hidden">
         {property.images && property.images.length > 0 ? (
           <img
             src={property.images[0]} // Display the first image as the featured image

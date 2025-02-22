@@ -30,7 +30,10 @@ export default function Home() {
       {/* Hero Section */}
       <div
         className="relative h-[400px] bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+        }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="relative z-10 text-center text-white max-w-2xl mx-auto px-4">
@@ -42,7 +45,7 @@ export default function Home() {
             <input
               type="text"
               placeholder="Search for properties..."
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-black"
             />
           </div>
         </div>
@@ -68,7 +71,7 @@ export default function Home() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              src="/beachfront.jpg"
+              src="https://plus.unsplash.com/premium_photo-1678963247798-0944cf6ba34d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YXBhcnRtZW50JTIwYnVpbGRpbmd8ZW58MHx8MHx8fDA%3D"
               alt="Beachfront"
               className="w-full h-32 object-cover"
             />
@@ -80,7 +83,7 @@ export default function Home() {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              src="/mountain.jpg"
+              src="https://images.unsplash.com/photo-1595330449916-e7c3e1962bd3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YXBhcnRtZW50JTIwYnVpbGRpbmd8ZW58MHx8MHx8fDA%3D"
               alt="Mountain"
               className="w-full h-32 object-cover"
             />
@@ -90,17 +93,17 @@ export default function Home() {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              src="/city.jpg"
+              src="https://plus.unsplash.com/premium_photo-1684175656320-5c3f701c082c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y29uZG98ZW58MHx8MHx8fDA%3D"
               alt="City"
               className="w-full h-32 object-cover"
             />
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900">City</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Condo</h3>
             </div>
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              src="/luxury.jpg"
+              src="https://images.unsplash.com/photo-1520501247332-6fb052b72414?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8dG93bnxlbnwwfHwwfHx8MA%3D%3D"
               alt="Luxury"
               className="w-full h-32 object-cover"
             />

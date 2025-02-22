@@ -128,7 +128,7 @@ const propertyController = {
   updateProperty: async (req, res) => {
     try {
       const { id } = req.params;
-      const { images, ...updateData } = req.body;
+      const { images, featuredImage, ...updateData } = req.body;
 
       const property = await Property.findOne({
         where: { id, hostId: req.user.id },
@@ -139,24 +139,27 @@ const propertyController = {
       }
 
       // Handle image updates
-      if (images && images.length > 0) {
+      if (images && Array.isArray(images)) {
         const newImages = await Promise.all(
           images.map(async (image) => {
-            if (image.startsWith("http")) return image;
-            const result = await uploadToCloudinary(image);
+            if (image.startsWith("http")) return image; // If it's already a URL, keep it
+            const result = await uploadToCloudinary(image); // Upload new images
             return result.secure_url;
           })
         );
 
-        updateData.images = [...property.images, ...newImages];
-        if (!updateData.featuredImage) {
-          updateData.featuredImage = newImages[0] || property.featuredImage;
-        }
+        // Replace existing images with new ones
+        updateData.images = newImages;
+
+        // Update featured image if provided, otherwise keep the existing one
+        updateData.featuredImage = featuredImage || property.featuredImage;
       }
 
+      // Update the property with the new data
       await property.update(updateData);
       res.json(property);
     } catch (error) {
+      console.error("Error updating property:", error);
       res.status(500).json({ message: "Failed to update property" });
     }
   },
