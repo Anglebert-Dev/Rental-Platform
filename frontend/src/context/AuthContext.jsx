@@ -10,11 +10,11 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem("token");
-      // console.log("Token from localStorage:", token); // Log the token
+     
       if (!token) throw new Error("No token found");
 
       const response = await authService.verify();
-      console.log("Verify response:", response); // Log the response
+      // console.log("Verify response:", response); // Log the response
 
       // Access the nested `data` field
       if (!response.data.data) throw new Error("Invalid user data");

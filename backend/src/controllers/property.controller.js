@@ -1,12 +1,13 @@
 const { sequelize } = require("../config/database");
 const { Property, Booking, User } = require("../models");
-const { uploadToCloudinary } = require('../utils/cloudinary'); 
+const { uploadToCloudinary } = require("../utils/cloudinary");
+const crypto = require("crypto");
 
 const propertyController = {
   createProperty: async (req, res) => {
     try {
       const { title, description, pricePerNight, location, images } = req.body;
-      
+
       // Upload images if provided
       let imageUrls = [];
       if (images && images.length > 0) {
@@ -23,16 +24,16 @@ const propertyController = {
         description,
         pricePerNight,
         location,
-        images: imageUrls,
+        images,
         featuredImage: imageUrls[0] || null,
         hostId: req.user.id,
       });
 
       res.status(201).json(property);
     } catch (error) {
-      res.status(500).json({ 
-        error: error.message, 
-        message: "Failed to create property" 
+      res.status(500).json({
+        error: error.message,
+        message: "Failed to create property",
       });
     }
   },
@@ -42,8 +43,13 @@ const propertyController = {
       const properties = await Property.findAll({
         attributes: {
           include: [
-            [sequelize.literal('(SELECT COUNT(*) FROM "Bookings" WHERE "Bookings"."propertyId" = "Property"."id")'), 'bookingCount']
-          ]
+            [
+              sequelize.literal(
+                '(SELECT COUNT(*) FROM "Bookings" WHERE "Bookings"."propertyId" = "Property"."id")'
+              ),
+              "bookingCount",
+            ],
+          ],
         },
         include: [
           {
@@ -136,7 +142,7 @@ const propertyController = {
       if (images && images.length > 0) {
         const newImages = await Promise.all(
           images.map(async (image) => {
-            if (image.startsWith('http')) return image;
+            if (image.startsWith("http")) return image;
             const result = await uploadToCloudinary(image);
             return result.secure_url;
           })
@@ -158,7 +164,7 @@ const propertyController = {
   deletePropertyImage: async (req, res) => {
     try {
       const { id, imageUrl } = req.params;
-      
+
       const property = await Property.findOne({
         where: { id, hostId: req.user.id },
       });
@@ -167,14 +173,15 @@ const propertyController = {
         return res.status(404).json({ message: "Property not found" });
       }
 
-      const updatedImages = property.images.filter(img => img !== imageUrl);
-      const updatedFeatured = property.featuredImage === imageUrl ? 
-        (updatedImages[0] || null) : 
-        property.featuredImage;
+      const updatedImages = property.images.filter((img) => img !== imageUrl);
+      const updatedFeatured =
+        property.featuredImage === imageUrl
+          ? updatedImages[0] || null
+          : property.featuredImage;
 
       await property.update({
         images: updatedImages,
-        featuredImage: updatedFeatured
+        featuredImage: updatedFeatured,
       });
 
       res.json({ message: "Image deleted successfully" });
@@ -197,6 +204,34 @@ const propertyController = {
     } catch (error) {
       res.status(500).json({ message: "Failed to delete property" });
     }
+  },
+
+  cloudinarySignature: async (req, res) => {
+    const timestamp = Math.round(Date.now() / 1000); // Current timestamp in seconds
+    const params = {
+      folder: "lala-properties",
+      timestamp: timestamp,
+      unique_filename: false,
+      use_filename: true,
+    };
+
+    // Sort parameters alphabetically
+    const sortedParams = Object.keys(params)
+      .sort()
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+
+    // Generate the signature
+    const signature = crypto
+      .createHmac("sha1", process.env.CLOUDINARY_API_SECRET)
+      .update(sortedParams)
+      .digest("hex");
+
+    res.json({
+      signature,
+      timestamp,
+      api_key: process.env.CLOUDINARY_API_KEY,
+    });
   },
 };
 

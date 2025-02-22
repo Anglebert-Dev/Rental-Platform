@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
@@ -25,6 +26,7 @@ export const authService = {
 export const propertyService = {
   getAll: () => api.get("/properties"),
   getById: (id) => api.get(`/properties/${id}`),
+  // cloudinarySignature: () => api.get("/properties/signature"),
   create: (data) => api.post("/properties", data),
   update: (id, data) => api.put(`/properties/${id}`, data),
   delete: (id) => api.delete(`/properties/${id}`),
