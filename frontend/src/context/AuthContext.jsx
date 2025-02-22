@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
       if (!token) throw new Error("No token found");
 
       const response = await authService.verify();
-      // console.log("Verify response:", response); // Log the response
 
       // Access the nested `data` field
       if (!response.data.data) throw new Error("Invalid user data");
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }) => {
         role: response.data.data.role,
       });
     } catch (error) {
-      console.error("Auth check failed:", error);
       localStorage.removeItem("token");
       setUser(null);
     } finally {
@@ -65,7 +63,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
     } catch (error) {
-      console.error("Logout error:", error);
     } finally {
       localStorage.removeItem("token");
       setUser(null);

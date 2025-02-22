@@ -5,7 +5,6 @@ import PropertyDetails from "./pages/PropertyDetails";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import HostDashboard from "./pages/HostDashboard";
-import AuthCallback from "./components/AuthCallback";
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();

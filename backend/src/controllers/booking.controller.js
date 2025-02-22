@@ -8,6 +8,11 @@ const bookingController = {
 
       // Fetch property to calculate total price
 
+      const property = await Property.findByPk(propertyId);
+      if (!property) {
+        return res.status(404).json({ message: "Property not found" });
+      }
+
       if (!(await isAvailable(propertyId, checkInDate, checkOutDate))) {
         return res
           .status(400)

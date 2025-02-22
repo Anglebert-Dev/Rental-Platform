@@ -37,11 +37,11 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8 px-4 sm:px-0">
         {/* Logo Section */}
         <div className="text-center">
-          <img
-            src="/logo.png" // Replace with your logo path
+          {/* <img
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Replace with your logo path
             className="mx-auto h-16 w-auto mb-6"
             alt="La La Property"
-          />
+          /> */}
         </div>
 
         {/* Login Card */}

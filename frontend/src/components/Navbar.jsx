@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const { user, logout, loading } = useAuth();
-  console.log(user);
 
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-100">
