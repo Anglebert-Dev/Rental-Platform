@@ -1,68 +1,82 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { createContext, useContext, useState, useEffect } from "react";
+import { authService } from "../services/api";
 
-// Create the context
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
-  // Check for the token in the URL when the page loads
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-
+    const token = localStorage.getItem("token");
     if (token) {
-      // Store the token in localStorage
-      localStorage.setItem("token", token);
-
-      // Set token for axios headers to include it in all future requests
-      axios.defaults.headers.Authorization = `Bearer ${token}`;
-
-      // Optional: Validate the token by calling a backend endpoint
-      validateToken(token);
+      checkAuth();
     } else {
-      // If no token, just finish loading
-      setLoading(false);
+      setLoading(false); // Stop loading if no token
     }
   }, []);
 
-  const validateToken = async (token) => {
+  const handleLoginSuccess = async (token) => {
     try {
-      const response = await axios.get("/api/auth/verify", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      console.log("🔐 Storing token:", token);
+      localStorage.setItem("token", token);
+
+      const response = await authService.verify();
+      console.log("👤 Verified user:", response.data.user);
+
+      setUser(response.data.user);
+      return true;
+    } catch (error) {
+      console.error("❌ Login failed:", error);
+      localStorage.removeItem("token");
+      setUser(null);
+      return false;
+    }
+  };
+
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      const response = await authService.verify();
       setUser(response.data.user);
     } catch (error) {
-      console.error("Token validation failed", error);
-      // Handle token validation error
+      console.error("Auth check failed:", error);
+      localStorage.removeItem("token"); // Clear invalid token
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const login = () => {
-    // Redirect user to Google login
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-    window.location.href = "/";
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(null);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        isAuthenticated: !!user,
+        handleLoginSuccess,
+        logout,
+        checkAuth,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

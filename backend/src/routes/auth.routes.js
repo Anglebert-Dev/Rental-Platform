@@ -18,7 +18,7 @@ router.get(
   })
 );
 router.get("/google/callback", passport.authenticate("google"), googleCallback);
-router.get('/verify', authenticateToken, verifyToken);
+router.get('/verify', verifyToken);
 router.put("/role", authenticateToken, updateRole);
 router.get('/logout', logout);
 

@@ -6,11 +6,20 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+export const authService = {
+  login: (data) => api.post("/auth/login", data),
+  logout: () => api.post("/auth/logout"),
+  verify: () => api.get("/auth/verify"),
+  googleLogin: () => api.get("/auth/google"),
+  updateRole: (role) => api.put("/auth/role", { role }),
+};
 
 export const propertyService = {
   getAll: () => api.get("/properties"),
