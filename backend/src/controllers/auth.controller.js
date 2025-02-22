@@ -5,7 +5,13 @@ const authController = {
   googleCallback: async (req, res) => {
     try {
       const token = jwt.sign(
-        { id: req.user.id, role: req.user.role },
+        {
+          id: req.user.id,
+          role: req.user.role,
+          name: req.user.name,
+          email: req.user.email,
+          profilePicture: req.user.profilePicture,
+        },
         process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );

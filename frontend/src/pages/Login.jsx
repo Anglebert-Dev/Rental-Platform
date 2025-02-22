@@ -11,7 +11,6 @@ export default function Login() {
 
   useEffect(() => {
     const token = searchParams.get("token");
-    console.log("🔍 Extracted token from URL:", token);
     if (token) {
       handleLoginSuccess(token).then((success) => {
         if (success) {

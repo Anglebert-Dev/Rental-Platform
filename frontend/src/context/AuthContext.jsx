@@ -12,22 +12,19 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       checkAuth();
     } else {
-      setLoading(false); // Stop loading if no token
+      setLoading(false);
     }
   }, []);
 
   const handleLoginSuccess = async (token) => {
     try {
-      console.log("🔐 Storing token:", token);
       localStorage.setItem("token", token);
 
       const response = await authService.verify();
-      console.log("👤 Verified user:", response.data.user);
 
       setUser(response.data.user);
       return true;
     } catch (error) {
-      console.error("❌ Login failed:", error);
       localStorage.removeItem("token");
       setUser(null);
       return false;
@@ -40,10 +37,15 @@ export const AuthProvider = ({ children }) => {
       if (!token) throw new Error("No token found");
 
       const response = await authService.verify();
-      setUser(response.data.user);
+      setUser({
+        id: response.data.id,
+        name: response.data.name,
+        email: response.data.email,
+        profilePicture: response.data.profilePicture,
+        role: response.data.role,
+      });
     } catch (error) {
-      console.error("Auth check failed:", error);
-      localStorage.removeItem("token"); // Clear invalid token
+      localStorage.removeItem("token");
       setUser(null);
     } finally {
       setLoading(false);
@@ -54,7 +56,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
     } catch (error) {
-      console.error("Logout error:", error);
     } finally {
       localStorage.removeItem("token");
       setUser(null);
