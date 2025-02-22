@@ -20,14 +20,14 @@ const AppRoutes = () => {
       <Route path="/auth/callback" element={<Navigate to="/" />} />
       <Route path="/properties/:id" element={<PropertyDetails />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      {/* <Route
+      <Route
         path="/dashboard"
         element={
-          // <PrivateRoute>
+          <PrivateRoute>
             <Dashboard />
-          // </PrivateRoute>
+          </PrivateRoute>
         }
-      /> */}
+      />
       <Route
         path="/host"
         element={

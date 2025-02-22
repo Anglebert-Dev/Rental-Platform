@@ -34,7 +34,16 @@ const authController = {
         return res.status(403).send({ message: "Invalid or expired token" });
       }
 
-      res.status(200).send({ user: decoded });
+      // Return the user data in the expected format
+      res.status(200).send({
+        data: {
+          id: decoded.id,
+          name: decoded.name,
+          email: decoded.email,
+          profilePicture: decoded.profilePicture,
+          role: decoded.role,
+        },
+      });
     });
   },
 

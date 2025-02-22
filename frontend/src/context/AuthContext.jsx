@@ -7,22 +7,52 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      checkAuth();
-    } else {
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      // console.log("Token from localStorage:", token); // Log the token
+      if (!token) throw new Error("No token found");
+
+      const response = await authService.verify();
+      console.log("Verify response:", response); // Log the response
+
+      // Access the nested `data` field
+      if (!response.data.data) throw new Error("Invalid user data");
+
+      setUser({
+        id: response.data.data.id,
+        name: response.data.data.name,
+        email: response.data.data.email,
+        profilePicture: response.data.data.profilePicture,
+        role: response.data.data.role,
+      });
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      await checkAuth();
+    };
+    initializeAuth();
   }, []);
 
   const handleLoginSuccess = async (token) => {
     try {
       localStorage.setItem("token", token);
-
       const response = await authService.verify();
-
-      setUser(response.data.user);
+      setUser({
+        id: response.data.data.id,
+        name: response.data.data.name,
+        email: response.data.data.email,
+        profilePicture: response.data.data.profilePicture,
+        role: response.data.data.role,
+      });
       return true;
     } catch (error) {
       localStorage.removeItem("token");
@@ -31,34 +61,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-
-      const response = await authService.verify();
-      setUser({
-        id: response.data.id,
-        name: response.data.name,
-        email: response.data.email,
-        profilePicture: response.data.profilePicture,
-        role: response.data.role,
-      });
-    } catch (error) {
-      localStorage.removeItem("token");
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const logout = async () => {
     try {
       await authService.logout();
     } catch (error) {
+      console.error("Logout error:", error);
     } finally {
       localStorage.removeItem("token");
       setUser(null);
+      window.location.href = "/";
     }
   };
 

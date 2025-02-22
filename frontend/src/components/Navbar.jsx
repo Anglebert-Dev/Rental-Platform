@@ -4,7 +4,8 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
+  console.log(user);
 
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-100">
@@ -88,7 +89,7 @@ export default function Navbar() {
                               </Link>
                             )}
                           </Menu.Item>
-                          {user.role === "host" && (
+                          {user?.role === "host" && (
                             <Menu.Item>
                               {({ active }) => (
                                 <Link
