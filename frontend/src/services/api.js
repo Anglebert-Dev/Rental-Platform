@@ -29,6 +29,7 @@ export const propertyService = {
   create: (data) => api.post("/properties", data),
   update: (id, data) => api.put(`/properties/${id}`, data),
   delete: (id) => api.delete(`/properties/${id}`),
+  search: (params) => api.get("/properties/search", { params }),
 };
 
 export const bookingService = {

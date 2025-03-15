@@ -1,10 +1,29 @@
 import { useState, useEffect } from "react";
 import { propertyService } from "../services/api";
 import PropertyCard from "../components/PropertyCard";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({
+    location: "",
+    checkIn: "",
+    checkOut: "",
+  });
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await propertyService.search(searchParams);
+      setProperties(response.data);
+    } catch (error) {
+      toast.error("Failed to search properties");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -27,27 +46,44 @@ export default function Home() {
 
   return (
     <div className="space-y-12">
-      {/* Hero Section */}
-      <div
-        className="relative h-[400px] bg-cover bg-center flex items-center justify-center"
+      {/* Hero Section with Search Form */}
+      <div className="relative h-[400px] bg-cover bg-center flex items-center justify-center"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-        }}
-      >
+          backgroundImage: "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+        }}>
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div className="relative z-10 text-center text-white max-w-2xl mx-auto px-4">
+        <div className="relative z-10 text-center text-white max-w-3xl mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Find your next stay</h1>
-          <p className="text-lg mb-6">
-            Discover unique homes, apartments, and more for your next trip.
-          </p>
-          <div className="bg-white p-4 rounded-lg shadow-lg">
-            <input
-              type="text"
-              placeholder="Search for properties..."
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-black"
-            />
-          </div>
+          <p className="text-lg mb-6">Discover unique homes, apartments, and more for your next trip.</p>
+          <form onSubmit={handleSearch} className="bg-white p-4 rounded-lg shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input
+                type="text"
+                placeholder="Where are you going?"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-black"
+                value={searchParams.location}
+                onChange={(e) => setSearchParams({ ...searchParams, location: e.target.value })}
+              />
+              <input
+                type="date"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-black"
+                value={searchParams.checkIn}
+                onChange={(e) => setSearchParams({ ...searchParams, checkIn: e.target.value })}
+              />
+              <input
+                type="date"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-black"
+                value={searchParams.checkOut}
+                onChange={(e) => setSearchParams({ ...searchParams, checkOut: e.target.value })}
+              />
+            </div>
+            <button
+              type="submit"
+              className="mt-4 w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 transition-colors"
+            >
+              Search
+            </button>
+          </form>
         </div>
       </div>
 

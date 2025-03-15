@@ -72,7 +72,7 @@ export default function HostDashboard() {
           className="btn-primary flex items-center bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
-          {/* Add Property */}
+          Add Property
         </button>
       </div>
 

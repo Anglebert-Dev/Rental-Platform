@@ -23,8 +23,9 @@ const bookingController = {
       // Calculate total nights and price
       const startDate = new Date(checkInDate);
       const endDate = new Date(checkOutDate);
-      const totalNights = Math.ceil(
-        (endDate - startDate) / (1000 * 60 * 60 * 24)
+      const totalNights = Math.max(
+        1,
+        Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))
       );
       const totalPrice = totalNights * property.pricePerNight;
 

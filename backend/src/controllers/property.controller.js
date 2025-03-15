@@ -1,5 +1,6 @@
 const { sequelize } = require("../config/database");
 const { Property, Booking, User } = require("../models");
+const { Op } = require("sequelize");
 const { uploadToCloudinary } = require("../utils/cloudinary");
 const crypto = require("crypto");
 
@@ -35,6 +36,56 @@ const propertyController = {
         error: error.message,
         message: "Failed to create property",
       });
+    }
+  },
+
+    searchProperties: async (req, res) => {
+    try {
+      const { location, checkIn, checkOut } = req.query;
+      
+      const whereClause = {};
+      
+      if (location) {
+        whereClause.location = {
+          [Op.iLike]: `%${location}%`
+        };
+      }
+
+      const properties = await Property.findAll({
+        where: whereClause,
+        include: [
+          {
+            model: User,
+            as: "host",
+            attributes: ["id", "name", "email", "profilePicture"],
+          },
+          {
+            model: Booking,
+            attributes: ["checkInDate", "checkOutDate"],
+            required: false,
+            where: checkIn && checkOut ? {
+              [Op.or]: [
+                {
+                  checkInDate: {
+                    [Op.gt]: new Date(checkOut)
+                  }
+                },
+                {
+                  checkOutDate: {
+                    [Op.lt]: new Date(checkIn)
+                  }
+                }
+              ]
+            } : undefined
+          }
+        ],
+        order: [["createdAt", "DESC"]],
+      });
+
+      res.json(properties);
+    } catch (error) {
+      console.error("Error searching properties:", error);
+      res.status(500).json({ message: "Failed to search properties" });
     }
   },
 
