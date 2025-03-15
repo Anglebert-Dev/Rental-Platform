@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { propertyService } from "../services/api";
-import { PlusIcon } from "@heroicons/react/outline"; // ✅ Correct for Heroicons v1
 import PropertyForm from "../components/PropertyForm";
 import toast from "react-hot-toast";
+import { 
+  PlusIcon, 
+  PencilAltIcon, 
+  TrashIcon 
+} from "@heroicons/react/outline";
 
 export default function HostDashboard() {
   const [properties, setProperties] = useState([]);
@@ -16,10 +20,11 @@ export default function HostDashboard() {
 
   const fetchProperties = async () => {
     try {
-      const response = await propertyService.getAll();
+      const response = await propertyService.getMyProperties();
       setProperties(response.data);
     } catch (error) {
       console.error("Failed to fetch properties:", error);
+      toast.error("Failed to fetch properties");
     } finally {
       setLoading(false);
     }
@@ -67,7 +72,7 @@ export default function HostDashboard() {
           className="btn-primary flex items-center bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
-          Add Property
+          {/* Add Property */}
         </button>
       </div>
 
@@ -77,18 +82,17 @@ export default function HostDashboard() {
             key={property.id}
             className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg"
           >
-            {/* Property Image */}
+            
             {property.images && property.images.length > 0 && (
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={property.images[0]} // Display the first image as the featured image
+                  src={property.images[0]} 
                   alt={property.title}
                   className="w-full h-full object-cover"
                 />
               </div>
             )}
 
-            {/* Property Details */}
             <div className="p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {property.title}
@@ -106,15 +110,17 @@ export default function HostDashboard() {
                     setSelectedProperty(property);
                     setShowPropertyForm(true);
                   }}
-                  className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-md hover:bg-primary-100 transition-colors"
+                  className="p-2 text-primary-600 hover:text-primary-800 transition-colors"
+                  title="Edit Property"
                 >
-                  Edit
+                  <PencilAltIcon className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => handleDeleteProperty(property.id)}
-                  className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+                  className="p-2 text-red-600 hover:text-red-800 transition-colors"
+                  title="Delete Property"
                 >
-                  Delete
+                  <TrashIcon className="w-6 h-6" />
                 </button>
               </div>
             </div>
@@ -122,7 +128,6 @@ export default function HostDashboard() {
         ))}
       </div>
 
-      {/* Property Form Modal */}
       {showPropertyForm && (
         <PropertyForm
           property={selectedProperty}

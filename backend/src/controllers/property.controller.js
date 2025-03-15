@@ -38,29 +38,34 @@ const propertyController = {
     }
   },
 
+  getAllProperties: async (req, res) => {
+    try {
+      const properties = await Property.findAll({
+        include: [
+          {
+            model: User,
+            as: "host",
+            attributes: ["id", "name", "email", "profilePicture"],
+          },
+        ],
+        order: [["createdAt", "DESC"]],
+      });
+
+      res.json(properties);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+      res.status(500).json({ message: "Failed to fetch properties" });
+    }
+  },
+
   getProperties: async (req, res) => {
     try {
       const properties = await Property.findAll({
-        attributes: {
-          include: [
-            [
-              sequelize.literal(
-                '(SELECT COUNT(*) FROM "Bookings" WHERE "Bookings"."propertyId" = "Property"."id")'
-              ),
-              "bookingCount",
-            ],
-          ],
-        },
+        where: { hostId: req.user.id },
         include: [
           {
             model: Booking,
-            attributes: [
-              "id",
-              "checkInDate",
-              "checkOutDate",
-              "status",
-              "totalPrice",
-            ],
+            attributes: ["id", "checkInDate", "checkOutDate", "status", "totalPrice"],
             include: [
               {
                 model: User,
