@@ -14,7 +14,7 @@ export default function Login() {
     if (token) {
       handleLoginSuccess(token).then((success) => {
         if (success) {
-          toast.success("Successfully signed in!");
+          // toast.success("Successfully signed in!");
           navigate("/");
         } else {
           toast.error("Failed to sign in. Please try again.");

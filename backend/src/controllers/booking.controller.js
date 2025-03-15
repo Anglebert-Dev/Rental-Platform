@@ -1,4 +1,5 @@
 const { Booking, Property, User } = require("../models");
+const { Op } = require("sequelize");
 const { isAvailable } = require("../services/booking.service");
 
 const bookingController = {
@@ -61,6 +62,10 @@ const bookingController = {
 
   getBookings: async (req, res) => {
     try {
+      const whereClause = req.user.role === 'host' 
+        ? { '$property.hostId$': req.user.id }
+        : { renterId: req.user.id };
+
       const bookings = await Booking.findAll({
         include: [
           {
@@ -74,6 +79,7 @@ const bookingController = {
             attributes: ["id", "name", "email"],
           },
         ],
+        where: whereClause,
         order: [["createdAt", "DESC"]],
       });
 
@@ -89,31 +95,32 @@ const bookingController = {
       const { id } = req.params;
       const { status } = req.body;
 
-      const booking = await Booking.findOne({
+      const booking = await Booking.findByPk(id, {
         include: [
           {
             model: Property,
-            as: "property", // Add the alias here
-            where: { hostId: req.user.id },
+            as: "property",
+            attributes: ["id", "hostId"],
           },
         ],
-        where: { id },
       });
 
       if (!booking) {
         return res.status(404).json({ message: "Booking not found" });
       }
 
+      if (booking.property.hostId !== req.user.id) {
+        return res.status(403).json({ message: "Not authorized to update this booking" });
+      }
+
       booking.status = status;
       await booking.save();
       res.json(booking);
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error.message,
-          message: "Failed to update booking status",
-        });
+      res.status(500).json({
+        error: error.message,
+        message: "Failed to update booking status",
+      });
     }
   },
 };

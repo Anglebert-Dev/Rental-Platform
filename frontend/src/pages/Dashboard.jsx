@@ -8,6 +8,8 @@ import {
   CurrencyDollarIcon,
   ClockIcon,
   CalendarIcon,
+  CheckCircleIcon,
+  XCircleIcon 
 } from "@heroicons/react/outline";
 import toast from "react-hot-toast";
 
@@ -23,9 +25,10 @@ export default function Dashboard() {
   const fetchBookings = async () => {
     try {
       const response = await bookingService.getMyBookings();
+      console.log('Bookings response:', response); // Debug log
       setBookings(response.data);
     } catch (error) {
-      console.error("Failed to fetch bookings:", error);
+      console.error("Failed to fetch bookings:", error.response?.data || error);
       toast.error("Failed to fetch bookings");
     } finally {
       setLoading(false);
@@ -34,11 +37,13 @@ export default function Dashboard() {
 
   const handleStatusUpdate = async (bookingId, newStatus) => {
     try {
-      await bookingService.updateStatus(bookingId, newStatus);
-      fetchBookings();
+      console.log('Updating booking:', bookingId, newStatus); // Debug log
+      const response = await bookingService.updateStatus(bookingId, newStatus);
+      console.log('Update response:', response); // Debug log
+      await fetchBookings();
       toast.success(`Booking ${newStatus} successfully`);
     } catch (error) {
-      console.error("Failed to update status:", error);
+      console.error("Failed to update status:", error.response?.data || error);
       toast.error("Failed to update booking status");
     }
   };
@@ -134,27 +139,26 @@ export default function Dashboard() {
                   </span>
                 </div>
 
+                
                 {/* Actions - Only show for hosts */}
                 <div className="flex flex-col gap-3 justify-center lg:items-end">
                   {user?.role === "host" && booking.status === "pending" && (
-                    <>
+                    <div className="flex space-x-4">
                       <button
-                        className="w-full lg:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        onClick={() =>
-                          handleStatusUpdate(booking.id, "confirmed")
-                        }
+                        className="p-2 text-green-600 hover:text-green-800 transition-colors"
+                        onClick={() => handleStatusUpdate(booking.id, "confirmed")}
+                        title="Confirm Booking"
                       >
-                        Confirm Booking
+                        <CheckCircleIcon className="w-8 h-8" />
                       </button>
                       <button
-                        className="w-full lg:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                        onClick={() =>
-                          handleStatusUpdate(booking.id, "canceled")
-                        }
+                        className="p-2 text-red-600 hover:text-red-800 transition-colors"
+                        onClick={() => handleStatusUpdate(booking.id, "canceled")}
+                        title="Cancel Booking"
                       >
-                        Cancel Booking
+                        <XCircleIcon className="w-8 h-8" />
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
